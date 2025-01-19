@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Prediction</title>
+    <script defer src="static/script.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Verdana', sans-serif;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            background-color: #202020;
+            margin: 0;
+            padding: 20px;
+        }
+
+        canvas {
+            display: none;
+        }
+
+        #video-container {
+            margin: 20px auto;
+        }
+
+        video {
+            align-items: center;
+            border: 5px solid transparent;
+            border-radius: 10px;
+            background-image: linear-gradient(to right, #FF8C00, #FF6347);
+            padding: 5px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        #result {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-top: 30px;
+        }
+
+        .title {
+            font-size: 2rem;
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="title">OCR Model</h1>
+    <div id="video-container">
+        <video id="video" autoplay></video>
+        <canvas id="canvas"></canvas>
+    </div>
+    <button id="capture">Capture and Predict</button>
+    <div id="result"></div>
+</body>
+
+</html>
