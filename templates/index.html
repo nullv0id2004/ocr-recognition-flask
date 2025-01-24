@@ -1,70 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCR Prediction</title>
-    <script defer src="static/script.js"></script>
+    <title>OCR Letter Recognition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-        body {
-            font-family: 'Verdana', sans-serif;
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            background-color: #202020;
-            margin: 0;
-            padding: 20px;
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            font-family: Arial, sans-serif; 
         }
-
-        canvas {
-            display: none;
+        #canvas-container { 
+            border: 2px solid black; 
+            margin: 20px; 
         }
-
-        #video-container {
-            margin: 20px auto;
+        #predictions {
+            font-size: 18px;
+            margin: 10px;
         }
-
-        video {
-            align-items: center;
-            border: 5px solid transparent;
-            border-radius: 10px;
-            background-image: linear-gradient(to right, #FF8C00, #FF6347);
-            padding: 5px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
         button {
             margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-
-        #result {
-            font-size: 1.5rem;
-            color: #FFD700;
-            margin-top: 30px;
-        }
-
-        .title {
-            font-size: 2rem;
-            text-align: center;
-            color: #FFD700;
-            margin-bottom: 30px;
+            padding: 10px;
         }
     </style>
 </head>
-
 <body>
-    <h1 class="title">OCR Model</h1>
-    <div id="video-container">
-        <video id="video" autoplay></video>
-        <canvas id="canvas"></canvas>
+    <div id="canvas-container">
+        <canvas id="canvas" width="280" height="280"></canvas>
     </div>
-    <button id="capture">Capture and Predict</button>
-    <div id="result"></div>
-</body>
+    <div id="predictions">Predicted Letters: </div>
+    <div>
+        <button onclick="predictLetter()">Predict</button>
+        <button onclick="clearCanvas()">Clear</button>
+    </div>
 
+    <script>
+        const canvas = new fabric.Canvas('canvas', {
+            isDrawingMode: true,
+            backgroundColor: 'white'
+        });
+        canvas.freeDrawingBrush.width = 15;
+        canvas.freeDrawingBrush.color = 'black';
+
+        function predictLetter() {
+            // Convert canvas to data URL
+            const dataURL = canvas.toDataURL({
+                format: 'png',
+                quality: 1.0,
+                multiplier: 1
+            });
+
+            // Send to server
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: dataURL })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let predText = data.predictions.map(
+                    pred => `${pred.letter}: ${(pred.probability * 100).toFixed(2)}%`
+                ).join(', ');
+                document.getElementById('predictions').textContent = 
+                    `Predicted Letters: ${predText}`;
+            })
+            .catch(error => {
+                document.getElementById('predictions').textContent = 
+                    `Error: ${error}`;
+            });
+        }
+
+        function clearCanvas() {
+            canvas.clear();
+            canvas.backgroundColor = 'white';
+            canvas.renderAll();
+            document.getElementById('predictions').textContent = 'Predicted Letters: ';
+        }
+    </script>
+</body>
 </html>
