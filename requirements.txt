@@ -1,5 +1,5 @@
 flask
 torch torchvision
-opencv-python
-numpy
-gunicorn
+pillow
+matplotlib
+
